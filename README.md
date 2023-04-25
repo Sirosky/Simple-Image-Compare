@@ -1,4 +1,7 @@
-# Simple Image Compare
+![](https://user-images.githubusercontent.com/2752448/234367857-e9e4fcc8-a87a-4b70-acd8-874c86058d2f.png)
+
+## Simple Image Compare!
+
 Easy image comparisons. A completely free and open source application. 
 
 ***
