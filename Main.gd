@@ -44,16 +44,22 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_on_window_resized)
 	%MenuButtonL.get_popup().id_pressed.connect(_MenuButtonL_pressed)
 	%MenuButtonR.get_popup().id_pressed.connect(_MenuButtonR_pressed)
+	
+	#Effects
+	for i in %HUD.get_children():
+		if i != %PanelHelp: #PanelHelp should stay hidden
+			UI.tween_alpha(i, false, false)
 
 func _unhandled_input(event):
-	if event is InputEventMouseButton:
+	if event is InputEventMouseButton: #Prepare to drag slider
 		mouse_pos = %ViewTop.get_local_mouse_position()
 		
 		if mouse_pos > Vector2(0,0) and mouse_pos < %ViewBottom.size and compare_focused == false:
 			compare_focused = true
 		else:
 			compare_focused = false
-		#Switch to mode 1, cycle through images.
+	
+	#Switch to mode 1, cycle through images.
 	if Input.is_action_just_pressed("ui_previous") and !Input.is_key_pressed(KEY_CTRL):
 		if mode == 0: mode_switch(1)
 		compare_files_current = max(compare_files_current - 1, 0)
@@ -62,14 +68,24 @@ func _unhandled_input(event):
 		if mode == 0: mode_switch(1)
 		compare_files_current = min(compare_files_current + 1, compare_files.size() - 1)
 		_MenuButtonL_pressed(compare_files_current)
+	
+	#Other hotkeys
+	if Input.is_action_just_pressed("ui_camera_center"): %UtilityBar._camera_center()
+	if Input.is_action_just_pressed("ui_zoom_reset"): %UtilityBar._zoom_reset()
+	if Input.is_action_just_pressed("ui_compare_reset"): %UtilityBar._compare_reset()
+	if Input.is_action_just_pressed("ui_help"): %InfoBar._help_show()
 
 func _process(delta: float) -> void:
 	mouse_pos = %ViewTop.get_local_mouse_position()
 	if Input.is_mouse_button_pressed(1) and compare_top.texture != null and compare_bottom.texture != null and compare_focused == true:
 		if mouse_pos > Vector2(0,0) and mouse_pos < %ViewBottom.size:
 			%ViewTop.size.x = mouse_pos.x
-			vsep_timer = vsep_delay
-			%VSeparator.visible = true
+			
+			#Slider stuff
+			vsep_timer = vsep_delay	
+			if %VSeparator.visible == false or %VSeparator.modulate != Color("ffffff"):
+				%VSeparator.visible = true
+				%VSeparator.modulate = Color("ffffff")
 			%VSeparator.size.y = %ViewBottom.size.y
 			%VSeparator.position = Vector2(mouse_pos.x + compare_offset.x - %VSeparator.size.x/2,compare_offset.y)
 			mode_switch(0)
@@ -81,12 +97,9 @@ func _process(delta: float) -> void:
 		vsep_timer -= 1
 	
 	if vsep_timer == 0 and %VSeparator.visible == true:
-		%VSeparator.visible = false
+		UI.tween_alpha(%VSeparator, true, true)
 	
-	if compare_top.texture == null or compare_bottom.texture == null:
-		%Tip.visible = true
-	else:
-		%Tip.visible = false
+
 	
 
 func views_resize(): #Mainly here to handle comparisons with different-sized images
@@ -162,6 +175,9 @@ func process_files(files): #Allow selection of image in the UI
 	if first_start == true and compare_files.size() > 1: #Autoload images once we have a full comparison
 		_MenuButtonL_pressed(0)
 		_MenuButtonR_pressed(1)
+		UI.tween_alpha(compare_top, false, false)
+		UI.tween_alpha(compare_bottom, false, false)
+		UI.tween_alpha(%Tip, true, true)
 		
 		%Camera2D.position = %ViewTop.size/2
 		compare_files_current = 0
@@ -194,14 +210,16 @@ func compare_image_load(path, texturerect): #Loads the actual image into the com
 	views_resize()
 
 func comparison_reset():
-	compare_top.texture = null
-	compare_bottom.texture = null
 	compare_files_current = -1
 	previous_image_dimensions = Vector2(0,0)
 	compare_files = []
 	%MenuButtonL.get_popup().clear()
 	%MenuButtonR.get_popup().clear()
 	temp_files_clear()
+	UI.texture_tween_alpha(compare_top, true)
+	UI.texture_tween_alpha(compare_bottom, true)
+	UI.tween_alpha(%Tip, false, false)
+	UI.tween_alpha(%VSeparator, true, true)
 
 
 func _notification(notification): #On exit
@@ -234,7 +252,9 @@ func _on_window_resized():
 	
 	%TopBar.position = Vector2(window_width/2 - %TopBar.size.x/2, 32)
 	%Tip.position = window_dimensions/2 - %Tip.size/2
+	if %PanelHelp.visible == true: %PanelHelp.position = window_dimensions/2 - %PanelHelp.custom_minimum_size/2
 	%UtilityBar.position = Vector2(64, window_height - 128)
+	
 	%InfoBar.position = Vector2(window_width - 64 - %InfoBar.size.x, window_height - 128)
 
 func temp_files_clear():

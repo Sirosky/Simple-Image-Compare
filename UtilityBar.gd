@@ -4,7 +4,7 @@ extends HBoxContainer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	%ButImageReset.button_down.connect(_comparison_reset)
+	%ButImageReset.button_down.connect(_compare_reset)
 	%ButZoomReset.button_down.connect(_zoom_reset)
 	%ButCenter.button_down.connect(_camera_center)
 
@@ -13,7 +13,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	%LabelZoom.text = str(snapped(%Camera2D.zoom.x * 100, .01)) + "%"
 
-func _comparison_reset():
+func _compare_reset():
 	Main.comparison_reset()
 
 func _camera_center():

@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://1rxr1ouddgbt"]
+[gd_scene load_steps=14 format=3 uid="uid://1rxr1ouddgbt"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1_kmuaj"]
+[ext_resource type="Texture2D" uid="uid://c0xwld3gdkpos" path="res://assets/icon_drop.png" id="3_cqwdm"]
 [ext_resource type="Theme" uid="uid://duthmaywmgemh" path="res://assets/Main.tres" id="3_vdeiu"]
 [ext_resource type="Texture2D" uid="uid://cyax4i0sgj5e0" path="res://assets/icon_reset.png" id="4_0py1c"]
 [ext_resource type="Script" path="res://UtilityBar.gd" id="4_an5dr"]
@@ -8,6 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://0wdohl1e8st8" path="res://assets/icon_image_reset.png" id="5_fgbhl"]
 [ext_resource type="Texture2D" uid="uid://d4ifpormas2as" path="res://assets/icon_focus.png" id="6_hkw8q"]
 [ext_resource type="Texture2D" uid="uid://cm4ri8xxrdlpj" path="res://assets/icon_help.png" id="8_gh5p6"]
+[ext_resource type="Script" path="res://InfoBar.gd" id="9_leqtl"]
+[ext_resource type="Texture2D" uid="uid://ccwpn54jj8as6" path="res://assets/logo.png" id="10_4d0et"]
+[ext_resource type="Script" path="res://PanelHelp.gd" id="11_0tg4f"]
+[ext_resource type="FontFile" uid="uid://c4sdsntgoqvby" path="res://assets/Poppins-SemiBold.ttf" id="11_3ttfp"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_kmuaj")
@@ -60,8 +65,10 @@ stretch_mode = 4
 
 [node name="VSeparator" type="VSeparator" parent="."]
 unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(4, 64)
 offset_right = 4.0
-offset_bottom = 3.0
+offset_bottom = 408.0
 mouse_filter = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -74,16 +81,27 @@ script = ExtResource("4_dqgki")
 camera_speed = 1000
 
 [node name="HUD" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
 
-[node name="Tip" type="Label" parent="HUD"]
+[node name="Tip" type="VBoxContainer" parent="HUD"]
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0.588235)
-offset_left = 649.0
-offset_top = 453.0
-offset_right = 1353.0
-offset_bottom = 641.0
+offset_left = 673.0
+offset_top = 251.0
+offset_right = 1293.0
+offset_bottom = 699.0
+
+[node name="IconDrop" type="TextureRect" parent="HUD/Tip"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("3_cqwdm")
+stretch_mode = 2
+
+[node name="LabelTip" type="Label" parent="HUD/Tip"]
+layout_mode = 2
 theme = ExtResource("3_vdeiu")
-theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 0.588235)
 theme_override_font_sizes/font_size = 64
 text = "Drag in two images
 to get started."
@@ -160,6 +178,7 @@ offset_top = 1013.0
 offset_right = 1904.0
 offset_bottom = 1069.0
 alignment = 2
+script = ExtResource("9_leqtl")
 
 [node name="ButHelp" type="Button" parent="HUD/InfoBar"]
 unique_name_in_owner = true
@@ -168,3 +187,69 @@ size_flags_vertical = 4
 tooltip_text = "Reset comparison."
 theme = ExtResource("3_vdeiu")
 icon = ExtResource("8_gh5p6")
+
+[node name="PanelHelp" type="PanelContainer" parent="HUD"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(800, 621)
+offset_right = 800.0
+offset_bottom = 621.0
+theme = ExtResource("3_vdeiu")
+script = ExtResource("11_0tg4f")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/PanelHelp"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="HUD/PanelHelp/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("10_4d0et")
+stretch_mode = 5
+
+[node name="LabelHeader" type="Label" parent="HUD/PanelHelp/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_font_sizes/font_size = 48
+text = "Simple Image Compare!"
+horizontal_alignment = 1
+
+[node name="LabelInfo" type="RichTextLabel" parent="HUD/PanelHelp/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/default_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_font_sizes/normal_font_size = 16
+theme_override_font_sizes/bold_font_size = 16
+theme_override_font_sizes/italics_font_size = 16
+theme_override_font_sizes/bold_italics_font_size = 16
+theme_override_font_sizes/mono_font_size = 16
+bbcode_enabled = true
+text = "Easy image comparisons. A completely free and open source application. Visit the [url=www.github.com/Sirosky/Simple-Image-Compare]Github[/url] for more information.
+
+Material Symbols used under [url=www.apache.org/licenses/LICENSE-2.0]Apache License 2.0[/url]."
+fit_content = true
+
+[node name="HSeparator" type="HSeparator" parent="HUD/PanelHelp/VBoxContainer"]
+layout_mode = 2
+
+[node name="LabelControls" type="RichTextLabel" parent="HUD/PanelHelp/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_fonts/bold_font = ExtResource("11_3ttfp")
+bbcode_enabled = true
+text = "[b]LMB[/b] drag over image: Activate slider comparison mode and drag the slider.
+[b]Q/E[/b] or [b]Scroll[/b]: Activate full image comparison and cycle through the images.
+[b]WASD[/b], [b]arrow keys[/b], or [b]RMB[/b] drag: Pan the camera.
+[b]Control + Scroll[/b]: Zoom.
+[b]Control + R[/b]: Reset the comparison.
+[b]C[/b]: Center the camera.
+[b]R[/b] or [b]Z[/b]: Reset zoom.
+[b]H[/b]: Display help."
+fit_content = true
+
+[node name="ButExit" type="Button" parent="HUD/PanelHelp/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_vdeiu")
+theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 1)
+text = "Got it."

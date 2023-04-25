@@ -1,6 +1,7 @@
-[gd_resource type="Theme" load_steps=9 format=3 uid="uid://duthmaywmgemh"]
+[gd_resource type="Theme" load_steps=10 format=3 uid="uid://duthmaywmgemh"]
 
 [ext_resource type="FontFile" uid="uid://dm6vwmc55lvkd" path="res://assets/Poppins-Regular.ttf" id="1_m4k4e"]
+[ext_resource type="StyleBox" uid="uid://c0yftf86nm8tx" path="res://assets/style_panel.tres" id="2_gg47a"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d7t3s"]
 content_margin_left = 4.0
@@ -96,5 +97,6 @@ MenuButton/colors/font_pressed_color = Color(0.556863, 0.772549, 0.870588, 1)
 MenuButton/constants/outline_size = 3
 MenuButton/font_sizes/font_size = 24
 MenuButton/fonts/font = ExtResource("1_m4k4e")
+PanelContainer/styles/panel = ExtResource("2_gg47a")
 PopupMenu/styles/hover = SubResource("StyleBoxFlat_lvbdd")
 PopupMenu/styles/panel = SubResource("StyleBoxFlat_q65hh")

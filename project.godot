@@ -11,11 +11,18 @@ config_version=5
 [application]
 
 config/name="Simple Image Compare"
-config/description="Simple Image Compare - a minimalistic tool for easy image comparisons. Created by Sirosky."
+config/description="Simple Image Compare - easy image comparisons. A completely free and open source application developed by Sirosky."
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.0", "GL Compatibility")
-boot_splash/bg_color=Color(0.141176, 0.141176, 0.141176, 1)
-config/icon="res://icon.svg"
+boot_splash/bg_color=Color(0.0392157, 0.0392157, 0.207843, 1)
+boot_splash/show_image=false
+boot_splash/image="res://assets/logo.png"
+boot_splash/fullsize=false
+config/icon="res://assets/logo.png"
+
+[autoload]
+
+UI="*res://assets/UI.gd"
 
 [display]
 
@@ -69,6 +76,27 @@ ui_next={
 ui_click={
 "deadzone": 0.5,
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":1,"position":Vector2(271, 19),"global_position":Vector2(276, 71),"factor":1.0,"button_index":1,"pressed":true,"double_click":false,"script":null)
+]
+}
+ui_camera_center={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":67,"key_label":0,"unicode":99,"echo":false,"script":null)
+]
+}
+ui_compare_reset={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":true,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":0,"echo":false,"script":null)
+]
+}
+ui_help={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":72,"key_label":0,"unicode":104,"echo":false,"script":null)
+]
+}
+ui_zoom_reset={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":90,"key_label":0,"unicode":122,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":114,"echo":false,"script":null)
 ]
 }
 
