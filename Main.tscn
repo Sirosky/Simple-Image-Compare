@@ -1,0 +1,170 @@
+[gd_scene load_steps=9 format=3 uid="uid://1rxr1ouddgbt"]
+
+[ext_resource type="Script" path="res://Main.gd" id="1_kmuaj"]
+[ext_resource type="Theme" uid="uid://duthmaywmgemh" path="res://assets/Main.tres" id="3_vdeiu"]
+[ext_resource type="Texture2D" uid="uid://cyax4i0sgj5e0" path="res://assets/icon_reset.png" id="4_0py1c"]
+[ext_resource type="Script" path="res://UtilityBar.gd" id="4_an5dr"]
+[ext_resource type="Script" path="res://Camera2D.gd" id="4_dqgki"]
+[ext_resource type="Texture2D" uid="uid://0wdohl1e8st8" path="res://assets/icon_image_reset.png" id="5_fgbhl"]
+[ext_resource type="Texture2D" uid="uid://d4ifpormas2as" path="res://assets/icon_focus.png" id="6_hkw8q"]
+[ext_resource type="Texture2D" uid="uid://cm4ri8xxrdlpj" path="res://assets/icon_help.png" id="8_gh5p6"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_kmuaj")
+
+[node name="ViewBottom" type="SubViewportContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 51.0
+offset_top = 3.0
+offset_right = 923.0
+offset_bottom = 566.0
+stretch = true
+
+[node name="PortBottom" type="SubViewport" parent="ViewBottom"]
+unique_name_in_owner = true
+handle_input_locally = false
+msaa_2d = 2
+size = Vector2i(872, 563)
+render_target_update_mode = 4
+
+[node name="ImageBottom" type="TextureRect" parent="ViewBottom/PortBottom"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 3
+stretch_mode = 4
+
+[node name="ViewTop" type="SubViewportContainer" parent="."]
+unique_name_in_owner = true
+offset_left = 50.0
+offset_top = 3.0
+offset_right = 1116.0
+offset_bottom = 639.0
+stretch = true
+
+[node name="PortTop" type="SubViewport" parent="ViewTop"]
+unique_name_in_owner = true
+handle_input_locally = false
+snap_2d_transforms_to_pixel = true
+snap_2d_vertices_to_pixel = true
+msaa_2d = 3
+screen_space_aa = 1
+use_taa = true
+size = Vector2i(1066, 636)
+render_target_update_mode = 4
+
+[node name="ImageTop" type="TextureRect" parent="ViewTop/PortTop"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 3
+stretch_mode = 4
+
+[node name="VSeparator" type="VSeparator" parent="."]
+unique_name_in_owner = true
+offset_right = 4.0
+offset_bottom = 3.0
+mouse_filter = 1
+
+[node name="Camera2D" type="Camera2D" parent="."]
+unique_name_in_owner = true
+position_smoothing_enabled = true
+position_smoothing_speed = 15.0
+drag_horizontal_enabled = true
+drag_vertical_enabled = true
+script = ExtResource("4_dqgki")
+camera_speed = 1000
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Tip" type="Label" parent="HUD"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.588235)
+offset_left = 649.0
+offset_top = 453.0
+offset_right = 1353.0
+offset_bottom = 641.0
+theme = ExtResource("3_vdeiu")
+theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_font_sizes/font_size = 64
+text = "Drag in two images
+to get started."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TopBar" type="HBoxContainer" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 603.0
+offset_top = 22.0
+offset_right = 1402.0
+offset_bottom = 78.0
+
+[node name="MenuButtonL" type="MenuButton" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_vdeiu")
+text = "Select left image"
+clip_text = true
+
+[node name="MenuButtonR" type="MenuButton" parent="HUD/TopBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_vdeiu")
+text = "Select right image"
+clip_text = true
+
+[node name="UtilityBar" type="HBoxContainer" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 980.0
+offset_right = 330.0
+offset_bottom = 1074.0
+script = ExtResource("4_an5dr")
+
+[node name="ButImageReset" type="Button" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Reset comparison."
+theme = ExtResource("3_vdeiu")
+icon = ExtResource("5_fgbhl")
+
+[node name="ButCenter" type="Button" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Center camera."
+theme = ExtResource("3_vdeiu")
+icon = ExtResource("6_hkw8q")
+
+[node name="ButZoomReset" type="Button" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Reset zoom."
+theme = ExtResource("3_vdeiu")
+icon = ExtResource("4_0py1c")
+
+[node name="LabelZoom" type="Label" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme = ExtResource("3_vdeiu")
+theme_override_colors/font_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_font_sizes/font_size = 64
+text = "%"
+
+[node name="InfoBar" type="HBoxContainer" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 1848.0
+offset_top = 1013.0
+offset_right = 1904.0
+offset_bottom = 1069.0
+alignment = 2
+
+[node name="ButHelp" type="Button" parent="HUD/InfoBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Reset comparison."
+theme = ExtResource("3_vdeiu")
+icon = ExtResource("8_gh5p6")
