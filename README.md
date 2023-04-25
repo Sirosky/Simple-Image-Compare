@@ -4,6 +4,8 @@
 
 Easy image comparisons. A completely free and open source application. 
 
+https://user-images.githubusercontent.com/2752448/234370718-474d5c6f-9687-4500-a7fe-dc00119de752.mp4
+
 ***
 ## How to use
 
