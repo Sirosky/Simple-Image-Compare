@@ -7,7 +7,7 @@ Easy image comparisons. A completely free and open source application.
 ***
 ## How to use
 
-Simply download the latest release from the [https://github.com/Sirosky/Simple-Image-Compare/releases](Releases page) and run the app. Once you've dragged in at least two images, let the comparisons begin!
+Simply download the latest release from the [Releases page](https://github.com/Sirosky/Simple-Image-Compare/releases) and run the app. Once you've dragged in at least two images, let the comparisons begin!
 
 ## Controls
 
