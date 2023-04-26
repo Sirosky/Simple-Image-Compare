@@ -15,7 +15,6 @@ var screen_height:int = DisplayServer.screen_get_size().y
 var compare_bottom_img = "" #Path to loaded image
 @onready var compare_top = $ViewTop/PortTop/ImageTop
 var compare_top_img = ""
-var compare_size: Vector2
 var compare_offset: Vector2 = Vector2(0, 0)
 var compare_focused = false
 var mouse_pos: Vector2
@@ -31,15 +30,14 @@ var vsep_timer = 0 #timer before hiding the vertical separator
 
 var dir_user = DirAccess.open("user://")
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	views_resize()
 	%ViewBottom.position = compare_offset
 	%ViewTop.position = compare_offset
 	%Camera2D.position = window_dimensions/2
 	_on_window_resized()
-
 	
+	#Signals
 	get_viewport().files_dropped.connect(_on_files_dropped)
 	get_viewport().size_changed.connect(_on_window_resized)
 	%MenuButtonL.get_popup().id_pressed.connect(_MenuButtonL_pressed)
@@ -59,7 +57,7 @@ func _unhandled_input(event):
 		else:
 			compare_focused = false
 	
-	#Switch to mode 1, cycle through images.
+	#Switch to mode 1, full image compare, and cycle through images.
 	if Input.is_action_just_pressed("ui_previous") and !Input.is_key_pressed(KEY_CTRL):
 		if mode == 0: mode_switch(1)
 		compare_files_current = max(compare_files_current - 1, 0)
@@ -77,12 +75,12 @@ func _unhandled_input(event):
 
 func _process(delta: float) -> void:
 	mouse_pos = %ViewTop.get_local_mouse_position()
-	if Input.is_mouse_button_pressed(1) and compare_top.texture != null and compare_bottom.texture != null and compare_focused == true:
+	if Input.is_mouse_button_pressed(1) and compare_top.texture != null and compare_bottom.texture != null and compare_focused == true: #Have slider track mouse
 		if mouse_pos > Vector2(0,0) and mouse_pos < %ViewBottom.size:
 			%ViewTop.size.x = mouse_pos.x
 			
 			#Slider stuff
-			vsep_timer = vsep_delay	
+			vsep_timer = vsep_delay
 			if %VSeparator.visible == false or %VSeparator.modulate != Color("ffffff"):
 				%VSeparator.visible = true
 				%VSeparator.modulate = Color("ffffff")
@@ -93,7 +91,7 @@ func _process(delta: float) -> void:
 	if compare_focused == true and Input.is_action_just_released("ui_click"):
 		compare_focused = false
 
-	if vsep_timer > 0 and %VSeparator.visible == true:
+	if vsep_timer > 0 and %VSeparator.visible == true: #Timer to hide separator when not in use
 		vsep_timer -= 1
 	
 	if vsep_timer == 0 and %VSeparator.visible == true:
@@ -129,7 +127,7 @@ func _on_files_dropped(files):
 	transfer_files(files)
 	
 
-func transfer_files(files): #Transfers files to user:// so Godot can load them
+func transfer_files(files): #Copying files to user://. Technically not necessary, but leaving it in if I decide to add comparison saving down the line.
 	var path = files[0].get_base_dir()
 	var dir = DirAccess.open(path)
 	
@@ -225,8 +223,6 @@ func comparison_reset():
 func _notification(notification): #On exit
 	if notification == NOTIFICATION_WM_CLOSE_REQUEST:
 		temp_files_clear()
-	
-
 
 func mode_switch(m) -> void:
 	if mode == m: return
