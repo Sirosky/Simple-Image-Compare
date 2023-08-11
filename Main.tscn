@@ -110,10 +110,10 @@ vertical_alignment = 1
 
 [node name="TopBar" type="HBoxContainer" parent="HUD"]
 unique_name_in_owner = true
-offset_left = 603.0
-offset_top = 22.0
-offset_right = 1402.0
-offset_bottom = 78.0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 1896.0
+offset_bottom = 80.0
 
 [node name="MenuButtonL" type="MenuButton" parent="HUD/TopBar"]
 unique_name_in_owner = true
@@ -121,6 +121,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("3_vdeiu")
 text = "Select left image"
+alignment = 0
 clip_text = true
 
 [node name="MenuButtonR" type="MenuButton" parent="HUD/TopBar"]
@@ -129,6 +130,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme = ExtResource("3_vdeiu")
 text = "Select right image"
+alignment = 2
 clip_text = true
 
 [node name="UtilityBar" type="HBoxContainer" parent="HUD"]

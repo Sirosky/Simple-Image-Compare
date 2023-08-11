@@ -35,6 +35,7 @@ func _ready() -> void:
 	%ViewBottom.position = compare_offset
 	%ViewTop.position = compare_offset
 	%Camera2D.position = window_dimensions/2
+	%TopBar.size.x = window_dimensions.x - 48
 	_on_window_resized()
 	
 	#Signals
@@ -137,26 +138,27 @@ func transfer_files(files): #Copying files to user://. Technically not necessary
 		if ext == "":
 			pass
 		
-		var target_path: String = "user://" + i.get_file()
+#		var target_path: String = "user://" + i.get_file()
 		if ext == "png" or ext == "jpeg" or ext == "jpg" or ext == "bmp" or ext == "webp" or ext == "gif" or ext == "dds":
+			process_files(files)
 #			print(target_path)
-			
-			if dir_user.file_exists(target_path): #If file already exists, rename the file until we can save it without overwriting
-#				print("File exists, rename.")
-				var proceed = false
-				var filename = i.get_file().get_slice(".",0) #Get filename without extension
-				var iteration = 1
-				
-				while proceed == false:
-					if !dir_user.file_exists("user://" + filename + "___" + str(iteration) + "." + ext): #Available file, can copy
-						dir.copy(i, "user://" + filename + "___" + str(iteration) + "." + ext)
-						proceed = true
-					else: #Can't copy, try again
-						iteration += 1
-			
-			else: dir.copy(i, "user://" + i.get_file()) #No conflicts, copy directly
+
+#			if dir_user.file_exists(target_path): #If file already exists, rename the file until we can save it without overwriting
+##				print("File exists, rename.")
+#				var proceed = false
+#				var filename = i.get_file().get_slice(".",0) #Get filename without extension
+#				var iteration = 1
+#
+#				while proceed == false:
+#					if !dir_user.file_exists("user://" + filename + "___" + str(iteration) + "." + ext): #Available file, can copy
+#						dir.copy(i, "user://" + filename + "___" + str(iteration) + "." + ext)
+#						proceed = true
+#					else: #Can't copy, try again
+#						iteration += 1
+#
+#			else: dir.copy(i, "user://" + i.get_file()) #No conflicts, copy directly
 	
-	process_files(files)
+	
 		
 func process_files(files): #Allow selection of image in the UI
 	var first_start = false
@@ -167,8 +169,8 @@ func process_files(files): #Allow selection of image in the UI
 	
 	for i in files:
 		compare_files.append(i)
-		%MenuButtonL.get_popup().add_item(i.get_file())
-		%MenuButtonR.get_popup().add_item(i.get_file())
+		%MenuButtonL.get_popup().add_item(i)
+		%MenuButtonR.get_popup().add_item(i)
 		
 	if first_start == true and compare_files.size() > 1: #Autoload images once we have a full comparison
 		_MenuButtonL_pressed(0)
@@ -186,16 +188,16 @@ func _MenuButtonL_pressed(id):
 	%MenuButtonL.text = text
 	
 	previous_image_dimensions = compare_top.size
-	compare_image_load("user://" + text, compare_top)
-	compare_top_img = "user://" + text
+	compare_image_load(text, compare_top)
+	compare_top_img = text
 	compare_files_current = id
 
 func _MenuButtonR_pressed(id):
 	var text = %MenuButtonR.get_popup().get_item_text(id)
 	%MenuButtonR.text = text
 	
-	compare_image_load("user://" + text, compare_bottom)
-	compare_bottom_img = "user://" + text
+	compare_image_load(text, compare_bottom)
+	compare_bottom_img = text
 	compare_files_current = id
 
 func compare_image_load(path, texturerect): #Loads the actual image into the comparison tool
