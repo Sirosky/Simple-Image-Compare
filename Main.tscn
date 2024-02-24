@@ -149,6 +149,24 @@ tooltip_text = "Reset comparison."
 theme = ExtResource("3_vdeiu")
 icon = ExtResource("5_fgbhl")
 
+[node name="ButLock" type="MenuButton" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Lock an image from removal."
+theme = ExtResource("3_vdeiu")
+toggle_mode = false
+icon = ExtResource("4_0py1c")
+flat = false
+
+[node name="ButUnlockBulk" type="Button" parent="HUD/UtilityBar"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+tooltip_text = "Center camera."
+theme = ExtResource("3_vdeiu")
+icon = ExtResource("6_hkw8q")
+
 [node name="ButCenter" type="Button" parent="HUD/UtilityBar"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -220,11 +238,11 @@ horizontal_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/default_color = Color(0.0588235, 0.619608, 0.87451, 1)
+theme_override_font_sizes/bold_italics_font_size = 16
+theme_override_font_sizes/italics_font_size = 16
+theme_override_font_sizes/mono_font_size = 16
 theme_override_font_sizes/normal_font_size = 16
 theme_override_font_sizes/bold_font_size = 16
-theme_override_font_sizes/italics_font_size = 16
-theme_override_font_sizes/bold_italics_font_size = 16
-theme_override_font_sizes/mono_font_size = 16
 bbcode_enabled = true
 text = "Easy image comparisons. A completely free and open source application. Visit the [url=www.github.com/Sirosky/Simple-Image-Compare]Github[/url] for more information.
 

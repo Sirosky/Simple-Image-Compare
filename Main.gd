@@ -19,6 +19,7 @@ var compare_offset: Vector2 = Vector2(0, 0)
 var compare_focused = false
 var mouse_pos: Vector2
 var compare_files: Array[String] = []
+var locked_files: Array[String] = [] #Files that are locked from refresh
 
 #Variables used in mode 1
 var compare_files_current = -1 
@@ -71,8 +72,11 @@ func _unhandled_input(event):
 	#Other hotkeys
 	if Input.is_action_just_pressed("ui_camera_center"): %UtilityBar._camera_center()
 	if Input.is_action_just_pressed("ui_zoom_reset"): %UtilityBar._zoom_reset()
-	if Input.is_action_just_pressed("ui_compare_reset"): %UtilityBar._compare_reset()
+	if Input.is_action_just_pressed("ui_compare_reset"): %UtilityBar._compare_reset(false)
+	if Input.is_action_just_pressed("ui_compare_reset_hard"): %UtilityBar._compare_reset(true)
 	if Input.is_action_just_pressed("ui_help"): %InfoBar._help_show()
+	if Input.is_action_just_pressed("ui_toggle_image_lock"): %UtilityBar._image_lock(compare_files_current)
+	if Input.is_action_just_pressed("ui_toggle_image_lock_bulk"): %UtilityBar._image_lock_bulk()
 
 func _process(delta: float) -> void:
 	mouse_pos = %ViewTop.get_local_mouse_position()
@@ -131,16 +135,17 @@ func _on_files_dropped(files):
 func transfer_files(files): #Copying files to user://. Technically not necessary, but leaving it in if I decide to add comparison saving down the line.
 	var path = files[0].get_base_dir()
 	var dir = DirAccess.open(path)
+	var ext = ""
 	
 	for i in files:
-		var ext = i.get_extension()
+		ext = i.get_extension()
 		
 		if ext == "":
 			pass
 		
 #		var target_path: String = "user://" + i.get_file()
-		if ext == "png" or ext == "jpeg" or ext == "jpg" or ext == "bmp" or ext == "webp" or ext == "gif" or ext == "dds":
-			process_files(files)
+	if ext == "png" or ext == "jpeg" or ext == "jpg" or ext == "bmp" or ext == "webp" or ext == "gif" or ext == "dds":
+		process_files(files)
 #			print(target_path)
 
 #			if dir_user.file_exists(target_path): #If file already exists, rename the file until we can save it without overwriting
@@ -169,8 +174,10 @@ func process_files(files): #Allow selection of image in the UI
 	
 	for i in files:
 		compare_files.append(i)
+		
 		%MenuButtonL.get_popup().add_item(i)
 		%MenuButtonR.get_popup().add_item(i)
+		%ButLock.get_popup().add_item(i)
 		
 	if first_start == true and compare_files.size() > 1: #Autoload images once we have a full comparison
 		_MenuButtonL_pressed(0)
@@ -202,24 +209,43 @@ func _MenuButtonR_pressed(id):
 
 func compare_image_load(path, texturerect): #Loads the actual image into the comparison tool
 	var image = Image.load_from_file(path)
-	
+	print(image)
 	var texture = ImageTexture.create_from_image(image)
 	texturerect.texture = texture
 	texturerect.size = Vector2(image.data.width, image.data.height)
 	texturerect.get_node("../../").size = Vector2(image.data.width, image.data.height)
+	print(str(Vector2(image.data.width, image.data.height)))
 	views_resize()
 
-func comparison_reset():
+func comparison_reset(hard_reset:bool): #Resets comparison images. Hard reset on overrides the locked files and resets everything.
 	compare_files_current = -1
 	previous_image_dimensions = Vector2(0,0)
-	compare_files = []
+	if hard_reset == false:
+		compare_files = locked_files
+	else: #If we're doing a hard reset, reset everything, even locked files
+		compare_files = []
+		locked_files = []
 	%MenuButtonL.get_popup().clear()
 	%MenuButtonR.get_popup().clear()
-	temp_files_clear()
-	UI.texture_tween_alpha(compare_top, true)
-	UI.texture_tween_alpha(compare_bottom, true)
-	UI.tween_alpha(%Tip, false, false)
-	UI.tween_alpha(%VSeparator, true, true)
+	%ButLock.get_popup().clear()
+	
+	if compare_files.is_empty() == true: #No locked files, we're doing a full refresh
+		UI.texture_tween_alpha(compare_top, true)
+		UI.texture_tween_alpha(compare_bottom, true)
+		UI.tween_alpha(%Tip, false, false)
+		UI.tween_alpha(%VSeparator, true, true)
+	else: #Reload locked files
+		for i in compare_files:
+			%MenuButtonL.get_popup().add_item(i)
+			%MenuButtonR.get_popup().add_item(i)
+			%ButLock.get_popup().add_item(i)
+		
+		%UtilityBar._image_lock_bulk()
+		
+		if compare_files.size() > 1: #Autoload images if needed
+			_MenuButtonL_pressed(0)
+			_MenuButtonR_pressed(1)
+
 
 
 func _notification(notification): #On exit

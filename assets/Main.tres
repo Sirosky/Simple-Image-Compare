@@ -2,6 +2,9 @@
 
 [ext_resource type="FontFile" uid="uid://dm6vwmc55lvkd" path="res://assets/Poppins-Regular.ttf" id="1_m4k4e"]
 [ext_resource type="StyleBox" uid="uid://c0yftf86nm8tx" path="res://assets/style_panel.tres" id="2_gg47a"]
+[ext_resource type="StyleBox" uid="uid://bpypctfoqyfx2" path="res://assets/style_but_focus.tres" id="2_npchl"]
+[ext_resource type="StyleBox" uid="uid://bs1konyng760d" path="res://assets/style_but_hover.tres" id="3_e8qty"]
+[ext_resource type="StyleBox" uid="uid://b6ekfwvyg8sjj" path="res://assets/style_but_normal.tres" id="4_voikr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d7t3s"]
 content_margin_left = 4.0
@@ -9,33 +12,6 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0.1, 0.1, 0.1, 0.3)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lf01a"]
-bg_color = Color(0.6, 0.6, 0.6, 0)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mm1o1"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.225, 0.225, 0.225, 0.6)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ss0xf"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.1, 0.1, 0.1, 0.6)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -84,9 +60,9 @@ Button/constants/outline_size = 0
 Button/font_sizes/font_size = 16
 Button/fonts/font = ExtResource("1_m4k4e")
 Button/styles/disabled = SubResource("StyleBoxFlat_d7t3s")
-Button/styles/focus = SubResource("StyleBoxFlat_lf01a")
-Button/styles/hover = SubResource("StyleBoxFlat_mm1o1")
-Button/styles/normal = SubResource("StyleBoxFlat_ss0xf")
+Button/styles/focus = ExtResource("2_npchl")
+Button/styles/hover = ExtResource("3_e8qty")
+Button/styles/normal = ExtResource("4_voikr")
 Button/styles/pressed = SubResource("StyleBoxFlat_svhuk")
 Fonts/fonts/large = ExtResource("1_m4k4e")
 Fonts/fonts/normal = ExtResource("1_m4k4e")
