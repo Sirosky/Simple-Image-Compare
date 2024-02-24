@@ -1,6 +1,6 @@
 extends Node
 
-var mode = 0 #0 = image slider, 1 
+var mode = 0 #0 = image slider, 1 = swap
 
 var window = DisplayServer.get_window_list()[0]
 var window_dimensions:Vector2 = DisplayServer.window_get_size(window)
@@ -49,6 +49,8 @@ func _ready() -> void:
 	for i in %HUD.get_children():
 		if i != %PanelHelp: #PanelHelp should stay hidden
 			UI.tween_alpha(i, false, false)
+	
+	mode_switch(1)
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton: #Prepare to drag slider
@@ -60,23 +62,28 @@ func _unhandled_input(event):
 			compare_focused = false
 	
 	#Switch to mode 1, full image compare, and cycle through images.
-	if Input.is_action_just_pressed("ui_previous") and !Input.is_key_pressed(KEY_CTRL):
+	if Input.is_action_just_released("ui_previous") and !Input.is_key_pressed(KEY_CTRL) and compare_files.size() > 1:
 		if mode == 0: mode_switch(1)
 		compare_files_current = max(compare_files_current - 1, 0)
+		#print(compare_files_current)
 		_MenuButtonL_pressed(compare_files_current)
-	if Input.is_action_just_pressed("ui_next") and !Input.is_key_pressed(KEY_CTRL):
+	if Input.is_action_just_released("ui_next") and !Input.is_key_pressed(KEY_CTRL) and compare_files.size() > 1:
 		if mode == 0: mode_switch(1)
 		compare_files_current = min(compare_files_current + 1, compare_files.size() - 1)
+		#print(compare_files_current)
 		_MenuButtonL_pressed(compare_files_current)
 	
 	#Other hotkeys
-	if Input.is_action_just_pressed("ui_camera_center"): %UtilityBar._camera_center()
-	if Input.is_action_just_pressed("ui_zoom_reset"): %UtilityBar._zoom_reset()
-	if Input.is_action_just_pressed("ui_compare_reset"): %UtilityBar._compare_reset(false)
-	if Input.is_action_just_pressed("ui_compare_reset_hard"): %UtilityBar._compare_reset(true)
-	if Input.is_action_just_pressed("ui_help"): %InfoBar._help_show()
-	if Input.is_action_just_pressed("ui_toggle_image_lock"): %UtilityBar._image_lock(compare_files_current)
-	if Input.is_action_just_pressed("ui_toggle_image_lock_bulk"): %UtilityBar._image_lock_bulk()
+	if Input.is_action_just_released("ui_camera_center"): %UtilityBar._camera_center()
+	if Input.is_action_just_released("ui_zoom_reset"): %UtilityBar._zoom_reset()
+	if Input.is_action_just_released("ui_compare_reset"): %UtilityBar._compare_reset(false)
+	if Input.is_action_just_released("ui_compare_reset_hard"): %UtilityBar._compare_reset(true)
+	if Input.is_action_just_released("ui_help"): %InfoBar._help_show()
+	
+	if Input.is_action_just_released("ui_toggle_image_lock_bulk"):
+		%UtilityBar._image_lock_bulk()
+	elif Input.is_action_just_released("ui_toggle_image_lock"): %UtilityBar._image_lock(max(0, compare_files_current))
+	
 
 func _process(delta: float) -> void:
 	mouse_pos = %ViewTop.get_local_mouse_position()
@@ -172,13 +179,18 @@ func process_files(files): #Allow selection of image in the UI
 	if compare_files.size() <= 1:
 		first_start = true
 	
+	
+	
 	for i in files:
 		compare_files.append(i)
 		
 		%MenuButtonL.get_popup().add_item(i)
 		%MenuButtonR.get_popup().add_item(i)
 		%ButLock.get_popup().add_item(i)
-		
+	
+	if files.size() == 1: %Notifier.notify("loaded!", files[0]) #sent notice with image name
+	if files.size() > 1: %Notifier.notify("Loaded " + str(files.size()) + " images!","")
+	
 	if first_start == true and compare_files.size() > 1: #Autoload images once we have a full comparison
 		_MenuButtonL_pressed(0)
 		_MenuButtonR_pressed(1)
@@ -209,12 +221,12 @@ func _MenuButtonR_pressed(id):
 
 func compare_image_load(path, texturerect): #Loads the actual image into the comparison tool
 	var image = Image.load_from_file(path)
-	print(image)
+	#print(image)
 	var texture = ImageTexture.create_from_image(image)
 	texturerect.texture = texture
 	texturerect.size = Vector2(image.data.width, image.data.height)
 	texturerect.get_node("../../").size = Vector2(image.data.width, image.data.height)
-	print(str(Vector2(image.data.width, image.data.height)))
+	#print(str(Vector2(image.data.width, image.data.height)))
 	views_resize()
 
 func comparison_reset(hard_reset:bool): #Resets comparison images. Hard reset on overrides the locked files and resets everything.
@@ -235,16 +247,18 @@ func comparison_reset(hard_reset:bool): #Resets comparison images. Hard reset on
 		UI.tween_alpha(%Tip, false, false)
 		UI.tween_alpha(%VSeparator, true, true)
 	else: #Reload locked files
-		for i in compare_files:
-			%MenuButtonL.get_popup().add_item(i)
-			%MenuButtonR.get_popup().add_item(i)
-			%ButLock.get_popup().add_item(i)
-		
-		%UtilityBar._image_lock_bulk()
-		
-		if compare_files.size() > 1: #Autoload images if needed
-			_MenuButtonL_pressed(0)
-			_MenuButtonR_pressed(1)
+		if hard_reset == false:
+			for i in compare_files:
+				%MenuButtonL.get_popup().add_item(i)
+				%MenuButtonR.get_popup().add_item(i)
+				%ButLock.get_popup().add_item(i)
+			
+			for i in compare_files.size():
+				%UtilityBar._image_lock(i)
+			
+			if compare_files.size() > 1: #Autoload images if needed
+				_MenuButtonL_pressed(0)
+				_MenuButtonR_pressed(1)
 
 
 
@@ -276,6 +290,7 @@ func _on_window_resized():
 	
 	%TopBar.position = Vector2(window_width/2 - %TopBar.size.x/2, 32)
 	%Tip.position = window_dimensions/2 - %Tip.size/2
+	%Notifier.position = Vector2(window_dimensions.x/2 - %Notifier.size.x/2, window_dimensions.y - 256)
 	if %PanelHelp.visible == true: %PanelHelp.position = window_dimensions/2 - %PanelHelp.custom_minimum_size/2
 	%UtilityBar.position = Vector2(64, window_height - 128)
 	
