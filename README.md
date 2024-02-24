@@ -17,7 +17,10 @@ Simply download the latest release from the [Releases page](https://github.com/S
 - **Q/E** or **Scroll**: Activate full image comparison and cycle through the images.
 - **WASD**, **arrow keys**, or **RMB** drag: Pan the camera.
 - **Control + Scroll**: Zoom.
-- **Control + R**: Reset the comparison.
+- **L**: Locks an image. Read more about [locked images here](https://github.com/Sirosky/Simple-Image-Compare/releases/tag/1.2).
+- **Ctrl + L**: Bulk toggles the locking of images.
+- **Control + R**: Reset the comparison. 
+- **Control + Shift + R**: Do a "hard reset" which clears both locked and unlocked images.
 - **C**: Center the camera.
 - **R** or **Z**: Reset zoom.
 - **H**: Display help.
