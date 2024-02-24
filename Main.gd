@@ -68,6 +68,7 @@ func _unhandled_input(event):
 		#print(compare_files_current)
 		_MenuButtonL_pressed(compare_files_current)
 	if Input.is_action_just_released("ui_next") and !Input.is_key_pressed(KEY_CTRL) and compare_files.size() > 1:
+		
 		if mode == 0: mode_switch(1)
 		compare_files_current = min(compare_files_current + 1, compare_files.size() - 1)
 		#print(compare_files_current)
@@ -76,8 +77,8 @@ func _unhandled_input(event):
 	#Other hotkeys
 	if Input.is_action_just_released("ui_camera_center"): %UtilityBar._camera_center()
 	if Input.is_action_just_released("ui_zoom_reset"): %UtilityBar._zoom_reset()
-	if Input.is_action_just_released("ui_compare_reset"): %UtilityBar._compare_reset(false)
-	if Input.is_action_just_released("ui_compare_reset_hard"): %UtilityBar._compare_reset(true)
+	if Input.is_action_just_pressed("ui_compare_reset"): %UtilityBar._compare_reset(false)
+	if Input.is_action_just_pressed("ui_compare_reset_hard"): %UtilityBar._compare_reset(true)
 	if Input.is_action_just_released("ui_help"): %InfoBar._help_show()
 	
 	if Input.is_action_just_released("ui_toggle_image_lock_bulk"):
@@ -135,13 +136,13 @@ func views_resize(): #Mainly here to handle comparisons with different-sized ima
 
 func _on_files_dropped(files):
 	
-#	print(files)
+	#print(files)
 	transfer_files(files)
 	
 
 func transfer_files(files): #Copying files to user://. Technically not necessary, but leaving it in if I decide to add comparison saving down the line.
-	var path = files[0].get_base_dir()
-	var dir = DirAccess.open(path)
+	#var path = files[0].get_base_dir()
+	#var dir = DirAccess.open(path)
 	var ext = ""
 	
 	for i in files:
@@ -175,21 +176,32 @@ func transfer_files(files): #Copying files to user://. Technically not necessary
 func process_files(files): #Allow selection of image in the UI
 	var first_start = false
 	files.sort()
+	#print("Loading")
+	#print(compare_files)
+
 	
 	if compare_files.size() <= 1:
 		first_start = true
 	
 	
-	
 	for i in files:
-		compare_files.append(i)
+		if compare_files.has(i) == false:
+			compare_files.append(i)
+			#print("Looping")
+			#print(locked_files)
+			%MenuButtonL.get_popup().add_item(i)
+			#print("Looping")
+			#print(locked_files)
+			%MenuButtonR.get_popup().add_item(i)
+			%ButLock.get_popup().add_item(i)
 		
-		%MenuButtonL.get_popup().add_item(i)
-		%MenuButtonR.get_popup().add_item(i)
-		%ButLock.get_popup().add_item(i)
+	_locked_files_rebuild()
 	
 	if files.size() == 1: %Notifier.notify("loaded!", files[0]) #sent notice with image name
 	if files.size() > 1: %Notifier.notify("Loaded " + str(files.size()) + " images!","")
+	
+	#print("Loaded")
+	#print(compare_files)
 	
 	if first_start == true and compare_files.size() > 1: #Autoload images once we have a full comparison
 		_MenuButtonL_pressed(0)
@@ -200,7 +212,8 @@ func process_files(files): #Allow selection of image in the UI
 		
 		%Camera2D.position = %ViewTop.size/2
 		compare_files_current = 0
-		
+	
+	
 
 func _MenuButtonL_pressed(id):
 	var text = %MenuButtonL.get_popup().get_item_text(id)
@@ -230,37 +243,60 @@ func compare_image_load(path, texturerect): #Loads the actual image into the com
 	views_resize()
 
 func comparison_reset(hard_reset:bool): #Resets comparison images. Hard reset on overrides the locked files and resets everything.
+	
 	compare_files_current = -1
 	previous_image_dimensions = Vector2(0,0)
-	if hard_reset == false:
-		compare_files = locked_files
-	else: #If we're doing a hard reset, reset everything, even locked files
-		compare_files = []
-		locked_files = []
+	locked_files.clear()
+	compare_files = []
+	
+	_locked_files_rebuild()
 	%MenuButtonL.get_popup().clear()
 	%MenuButtonR.get_popup().clear()
 	%ButLock.get_popup().clear()
+
+	#print(compare_files)
+	if hard_reset == false: #Reload locked files
+		
+		compare_files = locked_files
+		for i in compare_files:
+			%MenuButtonL.get_popup().add_item(i)
+			%MenuButtonR.get_popup().add_item(i)
+			%ButLock.get_popup().add_item(i)
+		
+		for i in compare_files.size():
+			%UtilityBar._image_lock(i)
+		
+		if compare_files.size() > 1: #Autoload images if needed
+			_MenuButtonL_pressed(0)
+			_MenuButtonR_pressed(1)
+		if compare_files.size() == 1: _MenuButtonL_pressed(0)
+			#print("Reload complete")
+			#print(compare_files)
 	
-	if compare_files.is_empty() == true: #No locked files, we're doing a full refresh
+	if compare_files.is_empty():
 		UI.texture_tween_alpha(compare_top, true)
 		UI.texture_tween_alpha(compare_bottom, true)
 		UI.tween_alpha(%Tip, false, false)
-		UI.tween_alpha(%VSeparator, true, true)
-	else: #Reload locked files
-		if hard_reset == false:
-			for i in compare_files:
-				%MenuButtonL.get_popup().add_item(i)
-				%MenuButtonR.get_popup().add_item(i)
-				%ButLock.get_popup().add_item(i)
-			
-			for i in compare_files.size():
-				%UtilityBar._image_lock(i)
-			
-			if compare_files.size() > 1: #Autoload images if needed
-				_MenuButtonL_pressed(0)
-				_MenuButtonR_pressed(1)
+		if %VSeparator.visible == true: UI.tween_alpha(%VSeparator, true, true)
+	
+	match hard_reset:
+		false:
+			%Notifier.notify("Comparisons reset ♻️","")
+		true:
+			%Notifier.notify("Conducted hard reset ♻️. Locked images have been cleared.","")
 
 
+func _locked_files_rebuild():#Rebuild locked files. Seems to be an issue where files are being added automatically to locked files. Makes no sense, almost certainly a Godot bug but not sure where.
+	locked_files = []
+	for i in %ButLock.get_popup().item_count: 
+		var text = %ButLock.get_popup().get_item_text(i)
+		#print(text)
+		if text.find("🔒") > -1:
+			#print(text)
+			#print(text.find("🔒"))
+			text = text.trim_prefix(%UtilityBar.lock_string)
+			locked_files.append(text)
+	#print(locked_files)
 
 func _notification(notification): #On exit
 	if notification == NOTIFICATION_WM_CLOSE_REQUEST:
